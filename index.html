@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EVERCLOSE · An adult animated series by Mind Attic</title>
+  <meta name="description" content="Two strays. One bond. One rule. Watch the free 5-minute pilot of EVERCLOSE, premiering Oct 29, 2026, and help unlock Episode 2 for everyone.">
+  <meta property="og:title" content="EVERCLOSE · The bond that saves you. The bond that breaks you.">
+  <meta property="og:description" content="Free pilot premieres Thu Oct 29, 19:00 CET. Reach $20,000 together and Episode 2 unlocks for everyone.">
+  <meta property="og:image" content="assets/img/poster.jpg">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#0B0B0C">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230B0B0C'/%3E%3Cpath d='M18 12h28v8H27v8h16v8H27v8h19v8H18z' fill='%23F2EEE6'/%3E%3Cpath d='M18 44l6 14 3-14z' fill='%23C9A961'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/fonts/fonts.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <div class="test-ribbon" id="testRibbon" role="status">
+    <strong>TEST MODE</strong> · Prototype. Payments and signups are simulated. No real money moves. Progress numbers are demo data.
+  </div>
+
+  <header class="nav" id="top">
+    <a class="nav__brand" href="#top" aria-label="EVERCLOSE home"><img src="assets/img/logo.png" alt="EVERCLOSE" width="140" height="41"></a>
+    <nav class="nav__links" aria-label="Main">
+      <a href="#pilot">Pilot</a>
+      <a href="#unlock">Unlock</a>
+      <a href="#story">Story</a>
+      <a href="#support">Support</a>
+      <a href="#community">Community</a>
+    </nav>
+    <button class="btn btn--gold btn--sm" data-support>Support</button>
+  </header>
+
+  <main>
+    <!-- ================= HERO ================= -->
+    <section class="hero" aria-labelledby="heroTitle">
+      <div class="hero__bg" aria-hidden="true"></div>
+      <div class="hero__inner">
+        <div class="hero__copy">
+          <p class="eyebrow eyebrow--brand"><img class="eyebrow__mark" src="assets/img/mindattic-mark.png" alt="" width="400" height="417">A Mind Attic Production · Adult animated series</p>
+          <h1 id="heroTitle" class="hero__title"><img src="assets/img/logo.png" alt="EVERCLOSE" width="1400" height="407"></h1>
+          <p class="hero__tagline">The bond that saves you. The bond that breaks you.</p>
+          <p class="hero__premiere"><span class="dot" aria-hidden="true"></span> Free pilot premieres on YouTube · <span data-premiere-label></span></p>
+
+          <div class="countdown" id="countdown" aria-live="polite">
+            <div class="countdown__cell"><span data-cd="d">00</span><small>days</small></div>
+            <div class="countdown__cell"><span data-cd="h">00</span><small>hours</small></div>
+            <div class="countdown__cell"><span data-cd="m">00</span><small>min</small></div>
+            <div class="countdown__cell"><span data-cd="s">00</span><small>sec</small></div>
+          </div>
+          <p class="countdown__local" id="localTime"></p>
+
+          <div class="hero__cta">
+            <a class="btn btn--light" href="#pilot"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg> Watch the pilot</a>
+            <button class="btn btn--gold" data-support>Support the series</button>
+          </div>
+          <p class="hero__rating">Rated for mature audiences · <a href="#content-note">Content note</a></p>
+        </div>
+        <figure class="hero__poster">
+          <img src="assets/img/poster.jpg" alt="EVERCLOSE poster: Siera, a black cat with ember eyes, and Anora, a white cat, side by side" width="900" height="1362">
+        </figure>
+      </div>
+    </section>
+
+    <!-- ================= PILOT ================= -->
+    <section class="section pilot" id="pilot" aria-labelledby="pilotTitle">
+      <div class="wrap">
+        <div class="section__head">
+          <p class="eyebrow">Episode 1 · Dust · 5 min</p>
+          <h2 id="pilotTitle">Watch the pilot. Free, for everyone.</h2>
+          <p class="lede">It starts on a mission. Then it goes back to how two strays became the Order’s sharpest weapon.</p>
+        </div>
+        <div class="player" id="player">
+          <div class="player__placeholder" id="playerPlaceholder">
+            <img src="assets/img/title-card.jpg" alt="" width="1400" height="604">
+            <div class="player__overlay">
+              <span class="player__play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+              <p class="player__status" id="playerStatus">YouTube Premiere · <span data-premiere-label></span></p>
+              <a class="player__remind" id="remindLink" href="#community">Get a reminder</a>
+            </div>
+            <span class="player__tag">YouTube embed placeholder</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ================= UNLOCK ================= -->
+    <section class="section unlock" id="unlock" aria-labelledby="unlockTitle">
+      <div class="wrap">
+        <div class="section__head">
+          <p class="eyebrow">Community unlock</p>
+          <h2 id="unlockTitle">$20,000 unlocks Episode 2 for everyone.</h2>
+          <p class="lede">The whole season is finished. Your support decides how fast it reaches the world.</p>
+        </div>
+
+        <div class="meter" id="meter">
+          <div class="meter__top">
+            <div>
+              <div class="meter__raised"><span id="raised">$0</span><span class="meter__goal"> of <span id="goal">$20,000</span></span></div>
+              <div class="meter__sub"><span id="supporters">0</span> supporters · <span id="pct">0%</span> of the goal</div>
+            </div>
+            <div class="meter__next">
+              <span class="chip chip--demo" id="demoChip" title="These numbers are demo data stored in your browser">demo data</span>
+              <span class="meter__episode">Next episode: <strong data-next-episode></strong></span>
+            </div>
+          </div>
+          <div class="bar" role="progressbar" aria-label="Progress toward the $20,000 community goal" aria-valuemin="0" aria-valuemax="20000" aria-valuenow="0" id="bar">
+            <div class="bar__fill" id="barFill"><span class="bar__glow"></span></div>
+            <div class="bar__ticks" aria-hidden="true"><i style="left:25%"></i><i style="left:50%"></i><i style="left:75%"></i></div>
+          </div>
+          <div class="bar__legend" aria-hidden="true"><span>$0</span><span>$5k</span><span>$10k</span><span>$15k</span><span>$20k</span></div>
+          <div class="meter__actions">
+            <button class="btn btn--gold" data-support>Help unlock Episode 2</button>
+            <button class="linkbtn" id="resetDemo" type="button">Reset demo numbers</button>
+          </div>
+        </div>
+
+        <ol class="steps">
+          <li><span class="steps__n">1</span><h3>Watch free</h3><p>The 5-minute pilot is free on YouTube from Oct 29. No paywall, no account.</p></li>
+          <li><span class="steps__n">2</span><h3>Chip in</h3><p>Every one-time gift and every monthly membership counts toward the public goal.</p></li>
+          <li><span class="steps__n">3</span><h3>Unlock together</h3><p>At $20,000, Episode 2 is released free for everyone. Then the next goal opens.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ================= STORY ================= -->
+    <section class="section story" id="story" aria-labelledby="storyTitle">
+      <div class="wrap">
+        <div class="story__grid">
+          <div class="story__text">
+            <p class="eyebrow">The story</p>
+            <h2 id="storyTitle">Two strays. One bond. One rule.</h2>
+            <p>A world of predators can only survive if it is held in check. Left alone, its hunger tips the balance and everything falls apart. The Velur Order exists to keep that balance, by force, from the shadows — and its weapons are never single.</p>
+            <p>Operatives are bonded in pairs through an implanted earpiece that keeps them connected every waking moment. The link forges a bond deeper than loyalty, and it is the Order’s leash: what makes a pair unstoppable is also the one weakness the Order can always pull.</p>
+          </div>
+          <blockquote class="codex">
+            <p class="codex__label">From the Velur Codex</p>
+            <p class="codex__velur">Sha'kara vel Lumira.<br>Lumira vel Sha'kara.</p>
+            <p class="codex__en">Shadow shall not outlive Light.<br>Light shall not outlive Shadow.</p>
+          </blockquote>
+        </div>
+
+        <div class="duo">
+          <article class="card char char--siera">
+            <picture><source srcset="assets/img/siera.webp" type="image/webp"><img class="char__img char__img--siera" src="assets/img/siera.jpg" alt="Siera: a dark grey cat with sharp black hair and fierce amber eyes, in a high gold collar, lit by shafts of golden light" width="1200" height="896" loading="lazy"></picture>
+            <div class="char__body">
+              <p class="char__role">The Strike</p>
+              <h3>Siera</h3>
+              <p class="char__quote">“Save it.”</p>
+              <p>A blade-like street kid whose rage kept her alive. The Order banked that fire into precision. Few words, Wing Chun and Muay Thai at close range, fights ended fast.</p>
+            </div>
+          </article>
+          <article class="card char char--anora">
+            <picture><source srcset="assets/img/anora.webp" type="image/webp"><img class="char__img char__img--anora" src="assets/img/anora.jpg" alt="Anora: a cream-furred cat with swept blonde hair, amber eyes and a long gold earring, in an ivory and gold collar against night-city lights" width="1200" height="670" loading="lazy"></picture>
+            <div class="char__body">
+              <p class="char__role">The Sensor</p>
+              <h3>Anora</h3>
+              <p class="char__quote">“Of course.”</p>
+              <p>Raised in a tavern, she learned to read danger before it reached her. Her mind is the weapon: senses that read people and rooms at lightning speed and predict the next move.</p>
+            </div>
+          </article>
+        </div>
+
+        <!-- ================= EPISODES =================
+             6 episode cards. Titles live here (and in config.js -> episodes for images).
+             To add a still: put assets/img/episodes/epN.jpg (+ .webp) and set episodes[N-1].image in config.js.
+             Missing/unset images show the black-and-gold placeholder. -->
+        <div class="episodes" id="episodes">
+          <div class="episodes__head">
+            <h3 class="episodes__title">Season 1 · 27 minutes · 6 episodes</h3>
+            <p class="episodes__sub">Episode 1 is free. Each community goal unlocks the next episode for everyone.</p>
+          </div>
+          <ol class="episodes__grid">
+            <li class="ep ep--free" data-ep="1">
+              <div class="ep__media">
+                <div class="ep__art" aria-hidden="true"><span class="ep__num">01</span></div>
+                
+                <span class="ep__tag ep__tag--free">Free pilot</span>
+              </div>
+              <div class="ep__body">
+                <p class="ep__kicker">Episode 1</p>
+                <h4 class="ep__title">Dust</h4>
+                <p class="ep__meta">Premieres Oct 29</p>
+              </div>
+            </li>
+            <li class="ep ep--next" data-ep="2">
+              <div class="ep__media">
+                <div class="ep__art" aria-hidden="true"><span class="ep__num">02</span></div>
+                <svg class="ep__lock" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" fill="none"/></svg>
+                <span class="ep__tag ep__tag--next" title="Unlocks at community goal"><span class="ep__tag-lg">Unlocks at community goal</span><span class="ep__tag-sm" aria-hidden="true">Community goal</span></span>
+              </div>
+              <div class="ep__body">
+                <p class="ep__kicker">Episode 2</p>
+                <h4 class="ep__title">Echo Room</h4>
+                <p class="ep__meta">$20,000 community goal</p>
+              </div>
+            </li>
+            <li class="ep ep--locked" data-ep="3">
+              <div class="ep__media">
+                <div class="ep__art" aria-hidden="true"><span class="ep__num">03</span></div>
+                <svg class="ep__lock" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" fill="none"/></svg>
+                <span class="ep__tag ep__tag--locked">Locked</span>
+              </div>
+              <div class="ep__body">
+                <p class="ep__kicker">Episode 3</p>
+                <h4 class="ep__title">The Vent</h4>
+                <p class="ep__meta">Coming soon</p>
+              </div>
+            </li>
+            <li class="ep ep--locked" data-ep="4">
+              <div class="ep__media">
+                <div class="ep__art" aria-hidden="true"><span class="ep__num">04</span></div>
+                <svg class="ep__lock" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" fill="none"/></svg>
+                <span class="ep__tag ep__tag--locked">Locked</span>
+              </div>
+              <div class="ep__body">
+                <p class="ep__kicker">Episode 4</p>
+                <h4 class="ep__title">Routine</h4>
+                <p class="ep__meta">Coming soon</p>
+              </div>
+            </li>
+            <li class="ep ep--locked" data-ep="5">
+              <div class="ep__media">
+                <div class="ep__art" aria-hidden="true"><span class="ep__num">05</span></div>
+                <svg class="ep__lock" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" fill="none"/></svg>
+                <span class="ep__tag ep__tag--locked">Locked</span>
+              </div>
+              <div class="ep__body">
+                <p class="ep__kicker">Episode 5</p>
+                <h4 class="ep__title">The Codex</h4>
+                <p class="ep__meta">Coming soon</p>
+              </div>
+            </li>
+            <li class="ep ep--locked" data-ep="6">
+              <div class="ep__media">
+                <div class="ep__art" aria-hidden="true"><span class="ep__num">06</span></div>
+                <svg class="ep__lock" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" fill="none"/></svg>
+                <span class="ep__tag ep__tag--locked">Locked</span>
+              </div>
+              <div class="ep__body">
+                <p class="ep__kicker">Episode 6</p>
+                <h4 class="ep__title">The Shadow</h4>
+                <p class="ep__meta">Coming soon</p>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SUPPORT ================= -->
+    <section class="section support" id="support" aria-labelledby="supportTitle">
+      <div class="wrap">
+        <div class="section__head">
+          <p class="eyebrow">Support EVERCLOSE</p>
+          <h2 id="supportTitle">Keep the bond alive.</h2>
+          <p class="lede">Independent, author-led and fan-funded. Card, Apple Pay, Google Pay or crypto. Every dollar counts toward the unlock.</p>
+        </div>
+        <div class="tiers">
+          <article class="card tier tier--once">
+            <p class="tier__kicker">One-time</p>
+            <h3>Give once</h3>
+            <p class="tier__desc">Any amount, no account needed.</p>
+            <div class="amounts" id="onceAmounts" role="group" aria-label="One-time amount"></div>
+            <label class="custom">
+              <span>$</span><input type="number" inputmode="decimal" min="2" step="1" placeholder="Custom" id="onceCustom" aria-label="Custom amount in US dollars">
+            </label>
+            <button class="btn btn--gold btn--block" id="onceGo">Give <span id="onceLabel">$10</span></button>
+          </article>
+          <div class="tiers__monthly" id="monthlyTiers"></div>
+        </div>
+        <p class="pay-note"><span class="paylogos" aria-hidden="true"><i>VISA</i><i>Mastercard</i><i>Apple Pay</i><i>G Pay</i><i>BTC</i><i>ETH</i><i>USDC</i><i>SOL</i></span>Secure checkout by Stripe. Crypto via a hosted invoice. Cancel memberships anytime.</p>
+      </div>
+    </section>
+
+    <!-- ================= COMMUNITY ================= -->
+    <section class="section community" id="community" aria-labelledby="communityTitle">
+      <div class="wrap community__grid">
+        <div class="card signup">
+          <p class="eyebrow">Premiere reminder</p>
+          <h2 id="communityTitle">Be there when it drops.</h2>
+          <p>One email when the pilot goes live, then only big news: unlocks, new episodes, drops. No spam.</p>
+          <form id="signupForm" novalidate>
+            <div class="signup__row">
+              <label class="sr-only" for="signupEmail">Email address</label>
+              <input type="email" id="signupEmail" name="email" placeholder="you@example.com" autocomplete="email" required>
+              <button class="btn btn--gold" type="submit">Notify me</button>
+            </div>
+            <p class="form-msg" id="signupMsg" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+        <div class="card discord">
+          <p class="eyebrow">Discord</p>
+          <h2>Join the Order.</h2>
+          <p>Watch-party on premiere night, theories, fan art and the live unlock tracker.</p>
+          <a class="btn btn--discord" id="discordLink" href="#" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.3 4.4A19.6 19.6 0 0 0 15.4 3l-.6 1.3a18 18 0 0 0-5.6 0L8.6 3a19.6 19.6 0 0 0-4.9 1.5C.6 9.1-.3 13.6.1 18.1a19.8 19.8 0 0 0 6 3l1.3-2a12.7 12.7 0 0 1-2-1l.5-.4a14 14 0 0 0 12.2 0l.5.4-2 1 1.3 2a19.7 19.7 0 0 0 6-3c.5-5.2-.9-9.7-3.6-13.7ZM8 15.4c-1.2 0-2.1-1.1-2.1-2.4S6.8 10.6 8 10.6s2.2 1.1 2.1 2.4c0 1.3-.9 2.4-2.1 2.4Zm8 0c-1.2 0-2.1-1.1-2.1-2.4s.9-2.4 2.1-2.4 2.2 1.1 2.1 2.4c0 1.3-.9 2.4-2.1 2.4Z"/></svg>
+            Join the Discord
+          </a>
+          <p class="placeholder-note" id="discordNote">Invite link placeholder</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CONTENT NOTE ================= -->
+    <section class="section note" id="content-note" aria-labelledby="noteTitle">
+      <div class="wrap note__inner">
+        <h2 id="noteTitle">Content note</h2>
+        <p>EVERCLOSE is made for mature audiences. It contains violence and themes of trauma, drug use and self-harm. Intimacy is implied, never explicit. Viewer discretion is advised.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="footer">
+    <div class="wrap footer__inner">
+      <p class="footer__line">Paw to paw and heart to heart, never two so close apart.</p>
+      <img class="footer__logo" src="assets/img/logo.png" alt="EVERCLOSE" width="700" height="204" loading="lazy">
+      <div class="signature">
+        <a class="signature__lockup" data-studio href="https://www.mindattic.io" target="_blank" rel="noopener" aria-label="Mind Attic · Story first">
+          <img class="signature__mark" src="assets/img/mindattic-mark.png" alt="" width="400" height="417" loading="lazy">
+          <img class="signature__name" src="assets/img/mindattic-name.png" alt="Mind Attic" width="1000" height="73" loading="lazy">
+          <img class="signature__script" src="assets/img/mindattic-storyfirst.png" alt="Story first" width="600" height="153" loading="lazy">
+        </a>
+      </div>
+      <section class="laurel-belt" aria-labelledby="beltTitle">
+        <h2 id="beltTitle" class="laurel-belt__title">Festival recognition</h2>
+        <div class="marquee" id="laurelMarquee">
+          <ul class="marquee__track">
+            <li class="laurel"><img src="assets/img/laurels/winner-ai-london-ff-2026.png" alt="Winner · AI London Film Festival 2026" width="463" height="300" style="--k:1.0" decoding="async"></li>
+            <li class="laurel"><img src="assets/img/laurels/finalist-big-screen-hack-london-2026.png" alt="Finalist · Big Screen Hack · London 2026" width="375" height="315" style="--k:1.05" decoding="async"></li>
+            <li class="laurel"><img src="assets/img/laurels/finalist-bionic-awards-2026.png" alt="Finalist · Bionic Awards 2026" width="463" height="300" style="--k:1.0" decoding="async"></li>
+            <li class="laurel"><img src="assets/img/laurels/shortlist-metamorph-award-2026.png" alt="Shortlist · Metamorph Award 2026" width="524" height="285" style="--k:0.95" decoding="async"></li>
+            <li class="laurel"><img src="assets/img/laurels/official-selection-best-animation-shaike-2026.png" alt="Official Selection · Best Animation · Shaike Film Festival · La Ciotat 2026" width="758" height="234" style="--k:0.78" decoding="async"></li>
+            <li class="laurel"><img src="assets/img/laurels/top10-best-animation-shaike-2025.png" alt="Shaike · Best Animation · Top 10 · 2025" width="416" height="270" style="--k:0.9" decoding="async"></li>
+            <li class="laurel"><img src="assets/img/laurels/official-selection-ai-movie-awards-magaluf-2026.png" alt="Official Selection · AI Movie Awards · Magaluf, Spain 2026" width="443" height="300" style="--k:1.0" decoding="async"></li>
+            <li class="laurel"><img src="assets/img/laurels/official-selection-kursaal-ai-san-sebastian-2026.png" alt="Official Selection · KURSAAL-AI Film Festival San Sebastián 2026" width="412" height="315" style="--k:1.05" decoding="async"></li>
+            <li class="laurel"><img src="assets/img/laurels/official-selection-ai-film-3-arizona-2025.png" alt="Official Selection · AI Film 3 – AI Film and Art Festival · Arizona · Year II · 2025" width="463" height="300" style="--k:1.0" decoding="async"></li>
+            <li class="laurel"><img src="assets/img/laurels/official-selection-ai-fj-japan-2025.png" alt="Official Selection · AI-FJ · AI Film Festival Japan 2025" width="463" height="300" style="--k:1.0" decoding="async"></li>
+          </ul>
+          <ul class="marquee__track marquee__track--dup" aria-hidden="true">
+            <li class="laurel"><img src="assets/img/laurels/winner-ai-london-ff-2026.png" alt="" width="463" height="300" style="--k:1.0" decoding="async"></li>
+            <li class="laurel"><img src="assets/img/laurels/finalist-big-screen-hack-london-2026.png" alt="" width="375" height="315" style="--k:1.05" decoding="async"></li>
+            <li class="laurel"><img src="assets/img/laurels/finalist-bionic-awards-2026.png" alt="" width="463" height="300" style="--k:1.0" decoding="async"></li>
+            <li class="laurel"><img src="assets/img/laurels/shortlist-metamorph-award-2026.png" alt="" width="524" height="285" style="--k:0.95" decoding="async"></li>
+            <li class="laurel"><img src="assets/img/laurels/official-selection-best-animation-shaike-2026.png" alt="" width="758" height="234" style="--k:0.78" decoding="async"></li>
+            <li class="laurel"><img src="assets/img/laurels/top10-best-animation-shaike-2025.png" alt="" width="416" height="270" style="--k:0.9" decoding="async"></li>
+            <li class="laurel"><img src="assets/img/laurels/official-selection-ai-movie-awards-magaluf-2026.png" alt="" width="443" height="300" style="--k:1.0" decoding="async"></li>
+            <li class="laurel"><img src="assets/img/laurels/official-selection-kursaal-ai-san-sebastian-2026.png" alt="" width="412" height="315" style="--k:1.05" decoding="async"></li>
+            <li class="laurel"><img src="assets/img/laurels/official-selection-ai-film-3-arizona-2025.png" alt="" width="463" height="300" style="--k:1.0" decoding="async"></li>
+            <li class="laurel"><img src="assets/img/laurels/official-selection-ai-fj-japan-2025.png" alt="" width="463" height="300" style="--k:1.0" decoding="async"></li>
+          </ul>
+        </div>
+      </section>
+
+      <p class="footer__credits">Written, directed, animated &amp; music by Andrej Klimov · Sound design William McGuigan · Story consultant Sherice Griffiths</p>
+      <p class="footer__links">
+        <a data-contact href="mailto:andrej@mindattic.io">andrej@mindattic.io</a>
+        <span aria-hidden="true">·</span>
+        <a data-studio href="https://www.mindattic.io" target="_blank" rel="noopener">mindattic.io</a>
+        <span aria-hidden="true">·</span>
+        <a href="#content-note">Content note</a>
+        <span aria-hidden="true">·</span>
+        <a href="#" data-placeholder="terms">Terms</a>
+        <span aria-hidden="true">·</span>
+        <a href="#" data-placeholder="privacy">Privacy</a>
+      </p>
+      <p class="footer__legal">© 2026 Mind Attic. All rights reserved. EVERCLOSE and its characters are the property of the studio.</p>
+    </div>
+  </footer>
+
+  <!-- ================= SUPPORT MODAL ================= -->
+  <div class="modal" id="modal" hidden>
+    <div class="modal__backdrop" data-close></div>
+    <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal__close" data-close aria-label="Close">×</button>
+
+      <!-- Step 1: amount -->
+      <div class="step" data-step="amount">
+        <div class="steps-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
+        <h2 id="modalTitle" class="modal__title">Support EVERCLOSE</h2>
+        <p class="modal__sub">Every dollar moves the $20,000 unlock bar.</p>
+        <div class="seg" role="tablist" aria-label="Support type">
+          <button role="tab" class="seg__btn" data-freq="once" aria-selected="true">One-time</button>
+          <button role="tab" class="seg__btn" data-freq="monthly" aria-selected="false">Monthly</button>
+        </div>
+        <div class="m-amounts" id="mAmounts" role="group" aria-label="Choose an amount"></div>
+        <label class="custom custom--modal" id="mCustomWrap">
+          <span>$</span><input type="number" inputmode="decimal" min="2" step="1" placeholder="Custom amount" id="mCustom" aria-label="Custom amount in US dollars">
+        </label>
+        <label class="field">
+          <span>Name for the supporter credits <em>(optional)</em></span>
+          <input type="text" id="mName" maxlength="40" placeholder="e.g. Nightpaw">
+        </label>
+        <p class="form-msg form-msg--err" id="amountErr" role="alert"></p>
+        <button class="btn btn--gold btn--block" id="toMethod">Continue · <span id="mTotal">$10</span></button>
+      </div>
+
+      <!-- Step 2: method -->
+      <div class="step" data-step="method" hidden>
+        <div class="steps-dots" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i></div>
+        <button class="back" data-back="amount">← Back</button>
+        <h2 class="modal__title">How would you like to pay?</h2>
+        <p class="modal__sub" id="methodSummary"></p>
+        <div class="methods">
+          <button class="method" id="payCard">
+            <span class="method__icons"><i>Card</i><i>Apple Pay</i><i>G Pay</i></span>
+            <span class="method__name">Card / Apple Pay / Google Pay</span>
+            <span class="method__hint">Secure checkout by Stripe</span>
+          </button>
+          <button class="method" id="payCrypto">
+            <span class="method__icons"><i>₿</i><i>Ξ</i><i>$</i><i>◎</i></span>
+            <span class="method__name">Crypto</span>
+            <span class="method__hint" id="cryptoHint">BTC · ETH · USDC · SOL</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 3a: simulated Stripe Checkout -->
+      <div class="step" data-step="card" hidden>
+        <div class="sim-banner">TEST MODE · Simulated Stripe Checkout · no real charge</div>
+        <button class="back" data-back="method">← Back</button>
+        <div class="checkout">
+          <div class="checkout__summary">
+            <p class="checkout__merchant">Mind Attic · EVERCLOSE</p>
+            <p class="checkout__what" id="coWhat">Support EVERCLOSE</p>
+            <p class="checkout__amount" id="coAmount">$10.00</p>
+            <p class="checkout__freq" id="coFreq"></p>
+            <img class="checkout__art" src="assets/img/poster-faces.jpg" alt="" width="900" height="600">
+          </div>
+          <form class="checkout__form" id="cardForm" novalidate>
+            <div class="wallets">
+              <button type="button" class="wallet wallet--apple" data-wallet="Apple Pay">Apple Pay</button>
+              <button type="button" class="wallet wallet--google" data-wallet="Google Pay">Google Pay</button>
+            </div>
+            <div class="or"><span>Or pay with card</span></div>
+            <label class="field"><span>Email</span><input type="email" id="coEmail" placeholder="you@example.com" autocomplete="email"></label>
+            <label class="field"><span>Card information</span>
+              <input type="text" id="coCard" inputmode="numeric" autocomplete="cc-number" placeholder="1234 1234 1234 1234" maxlength="19">
+            </label>
+            <div class="field-row">
+              <input type="text" id="coExp" inputmode="numeric" placeholder="MM / YY" maxlength="7" aria-label="Expiry date">
+              <input type="text" id="coCvc" inputmode="numeric" placeholder="CVC" maxlength="4" aria-label="CVC">
+            </div>
+            <label class="field"><span>Name on card</span><input type="text" id="coName" autocomplete="cc-name"></label>
+            <p class="testhint">Test card: <button type="button" class="linkbtn" id="fillTest">4242 4242 4242 4242</button> · any future date · any CVC. Try <code>4000 0000 0000 0002</code> to see a decline.</p>
+            <p class="form-msg form-msg--err" id="cardErr" role="alert"></p>
+            <button class="btn btn--stripe btn--block" type="submit" id="coPay">Pay <span id="coPayAmt">$10.00</span></button>
+            <p class="powered">Powered by <b>stripe</b> · simulated</p>
+          </form>
+        </div>
+      </div>
+
+      <!-- Step 3b: simulated crypto invoice -->
+      <div class="step" data-step="crypto" hidden>
+        <div class="sim-banner sim-banner--crypto">TEST MODE · Simulated crypto invoice · do not send real funds</div>
+        <button class="back" data-back="method">← Back</button>
+        <h2 class="modal__title modal__title--sm">Pay with crypto</h2>
+        <p class="modal__sub" id="cryptoProvider"></p>
+        <div class="coins" id="coins" role="radiogroup" aria-label="Choose a coin"></div>
+        <div class="invoice">
+          <div class="qr" id="qr" aria-label="QR code placeholder"></div>
+          <div class="invoice__info">
+            <p class="invoice__label">Send exactly</p>
+            <p class="invoice__amt" id="cAmt">0.000147 BTC</p>
+            <p class="invoice__usd" id="cUsd">≈ $10.00 · demo rate</p>
+            <p class="invoice__label">To this <span id="cNet">Bitcoin</span> address</p>
+            <div class="addr"><code id="cAddr"></code><button class="linkbtn" id="copyAddr" type="button">Copy</button></div>
+            <p class="invoice__timer">Quote expires in <b id="cTimer">15:00</b></p>
+          </div>
+        </div>
+        <p class="crypto-status" id="cStatus" role="status" aria-live="polite">Waiting for payment…</p>
+        <button class="btn btn--gold btn--block" id="simCrypto">Simulate payment received</button>
+        <p class="placeholder-note">Placeholder address and QR, not a real wallet. Live mode opens the provider's hosted invoice.</p>
+      </div>
+
+      <!-- Step 4: success -->
+      <div class="step step--success" data-step="success" hidden>
+        <div class="success__mark" aria-hidden="true"><svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="24"/><path d="M15 27l7 7 15-16"/></svg></div>
+        <p class="eyebrow">Thank you<span id="sName"></span></p>
+        <h2 class="modal__title">You're bonded.</h2>
+        <p class="modal__sub" id="sText"></p>
+        <div class="mini-meter">
+          <div class="mini-meter__nums"><b id="sRaised">$0</b> of $20,000 · <span id="sSupporters">0</span> supporters</div>
+          <div class="bar bar--mini"><div class="bar__fill" id="sBar"></div></div>
+        </div>
+        <p class="codex-mini">Sha'kara vel Lumira. Lumira vel Sha'kara.</p>
+        <div class="success__actions">
+          <button class="btn btn--light" id="shareBtn" type="button">Copy share link</button>
+          <button class="btn btn--gold" data-close>Back to the site</button>
+        </div>
+        <p class="placeholder-note">Simulated payment (test mode). No receipt was emailed.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/payments.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

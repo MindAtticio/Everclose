@@ -1,0 +1,11 @@
+# Dependencies (example Netlify functions install locally)
+node_modules/
+
+# Secrets and local environment files
+.env*
+
+# Netlify CLI local state
+.netlify/
+
+# macOS
+.DS_Store
