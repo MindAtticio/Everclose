@@ -79,8 +79,8 @@ window.EVERCLOSE_CONFIG = {
   crypto: {
     provider: "nowpayments",  // "nowpayments" | "coinbase" (label only in test mode)
     // LIVE: serverless function that creates a hosted invoice and returns {"url": "..."}.
-    // Example in examples/netlify/functions/create-crypto-invoice.js
-    invoiceEndpoint: "",
+    // In use: netlify/functions/create-crypto-invoice.mjs (needs NOWPAYMENTS_API_KEY in Netlify).
+    invoiceEndpoint: "/api/crypto-invoice",
     coins: ["BTC", "ETH", "USDC", "SOL"],
     // Demo-only conversion rates used to show an amount on the simulated screen.
     demoRatesUSD: { BTC: 68000, ETH: 2600, USDC: 1, SOL: 150 },

@@ -4,9 +4,10 @@
 // payment), minus refunds. Netlify's CDN caches the answer for 60 seconds, so page visits
 // don't hit Stripe; at most one request a minute does.
 //
-// Crypto is handled outside Stripe: add those totals by hand with the Netlify environment
-// variables CRYPTO_RAISED (USD) and CRYPTO_SUPPORTERS, then redeploy.
+// Crypto (NOWPayments) totals are added from the records kept by /api/crypto-ipn. Anything paid
+// outside both can still be added by hand with CRYPTO_RAISED (USD) / CRYPTO_SUPPORTERS, then redeploy.
 import { stripe, json } from "../lib/stripe.mjs";
+import { readTotals } from "../lib/crypto.mjs";
 
 const CAMPAIGN_START = process.env.CAMPAIGN_START || "2026-10-20T00:00:00Z";
 
@@ -22,8 +23,9 @@ export default async () => {
       cents += net;
       supporters.add(ch.customer || ch.billing_details?.email?.toLowerCase() || ch.id);
     }
-    const raised = cents / 100 + (Number(process.env.CRYPTO_RAISED) || 0);
-    const count = supporters.size + (Number(process.env.CRYPTO_SUPPORTERS) || 0);
+    const crypto = await readTotals();
+    const raised = cents / 100 + crypto.raised + (Number(process.env.CRYPTO_RAISED) || 0);
+    const count = supporters.size + crypto.supporters + (Number(process.env.CRYPTO_SUPPORTERS) || 0);
     return json(
       200,
       { raised: Math.round(raised * 100) / 100, supporters: count, updated: new Date().toISOString() },

@@ -4,6 +4,7 @@
   "description": "EVERCLOSE website. Static site; Netlify Functions in netlify/functions handle Stripe.",
   "engines": { "node": ">=20" },
   "dependencies": {
+    "@netlify/blobs": "^8.1.0",
     "stripe": "^18.5.0"
   }
 }

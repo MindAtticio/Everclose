@@ -94,10 +94,14 @@ Supporter-credit names are saved on each payment as metadata `credit_name`.
    no explicit content". Add real Terms and Privacy pages (Stripe needs them).
 2. **Recreate the products in live mode** with the same lookup keys, then set the live
    `STRIPE_SECRET_KEY` for the production context only. Do one real $1 payment and refund it.
-3. **Crypto processor.** Open a NOWPayments (or Coinbase Commerce) account, connect a payout
-   wallet you control, deploy `create-crypto-invoice.js` with the API key as an env var, set
-   `crypto.invoiceEndpoint`. Crypto is one-time only on the page. Keep records for tax; convert
-   to fiat promptly if price swings matter.
+3. **Crypto (NOWPayments, built).** One-time gifts in crypto go to a NOWPayments hosted invoice
+   (`POST /api/crypto-invoice`, `netlify/functions/create-crypto-invoice.mjs`). NOWPayments calls
+   `POST /api/crypto-ipn` when a payment changes; the function checks the signature and records each
+   **finished** payment once in Netlify Blobs, and `/api/progress` adds those to the bar. Netlify env vars:
+   `NOWPAYMENTS_API_KEY`, `NOWPAYMENTS_IPN_SECRET`, and `NOWPAYMENTS_SANDBOX=true` while testing with a
+   sandbox account (remove it for live). In NOWPayments, set the payout wallet(s) you control and choose
+   which coins to accept. Partial or expired payments are not counted; check them in the NOWPayments
+   dashboard. Keep records for tax.
 4. **Live progress bar.** The bar reads `unlock.progressEndpoint` (JSON `{raised, supporters}`).
    `examples/netlify/functions/progress.js` sums Stripe payments; add crypto totals from the
    provider webhook. Until that exists you can host a static `api/progress` JSON file and update
