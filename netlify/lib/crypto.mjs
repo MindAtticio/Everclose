@@ -21,16 +21,33 @@ function sortKeys(value) {
   return value;
 }
 
-/** True when the x-nowpayments-sig header matches HMAC-SHA512(sorted JSON body, IPN secret). */
+/** Constant-time comparison of two hex signatures. */
+function sameHex(a, b) {
+  const x = Buffer.from(String(a), "utf8"), y = Buffer.from(String(b).trim().toLowerCase(), "utf8");
+  return x.length === y.length && timingSafeEqual(x, y);
+}
+
+/**
+ * Checks the x-nowpayments-sig header: HMAC-SHA512 of the sorted JSON body, keyed with the IPN secret.
+ * NOWPayments' docs build that JSON as JSON.stringify(body, Object.keys(body).sort()), which sorts the
+ * top level and (as a side effect of the replacer) drops nested keys; other integrations sort recursively.
+ * Both forms need the secret, so either is accepted. Returns { ok, reason } for the log; never the secret.
+ */
 export function verifyIpn(rawBody, signature) {
-  const secret = process.env.NOWPAYMENTS_IPN_SECRET;
-  if (!secret || !signature) return false;
+  const secret = String(process.env.NOWPAYMENTS_IPN_SECRET || "").trim();
+  if (!secret) return { ok: false, reason: "NOWPAYMENTS_IPN_SECRET is not set" };
+  if (!signature) return { ok: false, reason: "no x-nowpayments-sig header" };
   let parsed;
-  try { parsed = JSON.parse(rawBody); } catch { return false; }
-  const expected = createHmac("sha512", secret).update(JSON.stringify(sortKeys(parsed))).digest("hex");
-  const a = Buffer.from(expected, "utf8");
-  const b = Buffer.from(String(signature).trim().toLowerCase(), "utf8");
-  return a.length === b.length && timingSafeEqual(a, b);
+  try { parsed = JSON.parse(rawBody); } catch { return { ok: false, reason: "body is not JSON" }; }
+  const hmac = (str) => createHmac("sha512", secret).update(str).digest("hex");
+  const forms = {
+    docs: JSON.stringify(parsed, Object.keys(parsed).sort()),
+    recursive: JSON.stringify(sortKeys(parsed)),
+  };
+  for (const [name, str] of Object.entries(forms)) {
+    if (sameHex(hmac(str), signature)) return { ok: true, reason: name };
+  }
+  return { ok: false, reason: "signature does not match (check NOWPAYMENTS_IPN_SECRET matches the IPN key in NOWPayments)" };
 }
 
 /** Recompute the crypto totals from the recorded payments and save them as one small record. */

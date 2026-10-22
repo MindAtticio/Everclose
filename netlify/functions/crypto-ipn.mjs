@@ -13,14 +13,17 @@ export default async (req) => {
   if (req.method !== "POST") return json(405, { error: "Method not allowed" });
 
   const raw = await req.text();
-  if (!verifyIpn(raw, req.headers.get("x-nowpayments-sig"))) {
-    console.error("crypto-ipn: rejected, bad or missing signature");
+  console.log("crypto-ipn: notice received,", raw.length, "bytes");
+  const check = verifyIpn(raw, req.headers.get("x-nowpayments-sig"));
+  if (!check.ok) {
+    console.error("crypto-ipn: rejected:", check.reason);
     return json(401, { error: "invalid signature" });
   }
 
   const p = JSON.parse(raw);
   const paymentId = String(p.payment_id || "");
-  console.log("crypto-ipn:", paymentId, p.payment_status, p.order_id || "");
+  console.log("crypto-ipn: signature ok (" + check.reason + "):", paymentId, p.payment_status,
+    "price", p.price_amount, p.price_currency, "quoted", p.pay_amount, "paid", p.actually_paid, p.pay_currency);
   const COUNTED = ["finished", "partially_paid"];
   if (!COUNTED.includes(p.payment_status) || !paymentId) return json(200, { ok: true, counted: false });
 
@@ -52,7 +55,8 @@ export default async (req) => {
         at: new Date().toISOString(),
       });
     }
-    await recomputeTotals(store);
+    const totals = await recomputeTotals(store);
+    console.log("crypto-ipn: recorded", paymentId, "usd", usd, "-> crypto total", totals.raised, "from", totals.supporters, "payments");
     return json(200, { ok: true, counted: true });
   } catch (err) {
     console.error("crypto-ipn: could not record payment:", err?.message);
