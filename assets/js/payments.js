@@ -94,8 +94,8 @@
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...order, coin })
     });
-    const j = await res.json();
-    if (!j.url) throw new Error("No invoice URL returned");
+    const j = await res.json().catch(() => ({}));
+    if (!res.ok || !j.url) throw new Error(j.error || "Crypto checkout is unavailable right now. Please try again, or pay by card.");
     window.location.href = j.url;
     return true;
   }

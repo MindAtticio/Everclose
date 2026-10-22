@@ -5,6 +5,9 @@
   const P = window.EC_Payments;
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  // Whole dollars on the page, always rounded up ($1.92 shows as $2). The exact amount is kept for the
+  // goal check. The tiny tolerance stops float noise (2.0000000001) from showing an extra dollar.
+  const upDollars = (n) => Math.ceil(Number(n) - 1e-6);
   const fmt = (n, cents) => "$" + Number(n).toLocaleString("en-US", { minimumFractionDigits: cents ? 2 : 0, maximumFractionDigits: cents ? 2 : 0 });
   const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -67,17 +70,17 @@
       const r = from.raised + (to.raised - from.raised) * e;
       const sp = Math.round(from.supporters + (to.supporters - from.supporters) * e);
       const pct = Math.min(100, (r / goal) * 100);
-      $("#raised").textContent = fmt(Math.round(r));
+      $("#raised").textContent = fmt(upDollars(r));
       $("#supporters").textContent = sp.toLocaleString("en-US");
       $("#pct").textContent = (pct < 10 ? pct.toFixed(1) : Math.round(pct)) + "%";
       $("#barFill").style.width = Math.max(pct, 0.6) + "%";
-      $("#sRaised").textContent = fmt(Math.round(r));
+      $("#sRaised").textContent = fmt(upDollars(r));
       $("#sSupporters").textContent = sp.toLocaleString("en-US");
       $("#sBar").style.width = Math.max(pct, 0.6) + "%";
       if (k < 1) requestAnimationFrame(step);
       else {
         shown = to;
-        $("#bar").setAttribute("aria-valuenow", Math.round(to.raised));
+        $("#bar").setAttribute("aria-valuenow", upDollars(to.raised));
         $("#meter").classList.toggle("is-complete", to.raised >= goal);
       }
     };
