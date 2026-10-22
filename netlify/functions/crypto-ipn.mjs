@@ -1,8 +1,10 @@
 // POST /api/crypto-ipn  (called by NOWPayments, not by the site)
-// Verifies the x-nowpayments-sig signature, and when a payment is "finished" records it once in
-// Netlify Blobs and refreshes the crypto totals that /api/progress adds to the unlock bar.
-// Only "finished" payments count, valued at the USD amount of the invoice. Partial or expired
-// payments are acknowledged but not counted (check those in the NOWPayments dashboard).
+// Verifies the x-nowpayments-sig signature, then records each "finished" or "partially_paid" payment
+// in Netlify Blobs (one record per payment, updated if its status changes) and refreshes the crypto
+// totals that /api/progress adds to the unlock bar.
+// Crypto rates move between the quote and the payment, so a fan who sends what NOWPayments showed can
+// arrive a few cents short ("partially_paid"). If at least 97% arrives, the full gift is counted;
+// otherwise the USD value of what actually arrived is counted. Never more than the gift amount.
 import { verifyIpn, cryptoStore, recomputeTotals } from "../lib/crypto.mjs";
 import { json } from "../lib/stripe.mjs";
 
@@ -18,21 +20,29 @@ export default async (req) => {
   const p = JSON.parse(raw);
   const paymentId = String(p.payment_id || "");
   console.log("crypto-ipn:", paymentId, p.payment_status, p.order_id || "");
-  if (p.payment_status !== "finished" || !paymentId) return json(200, { ok: true, counted: false });
+  const COUNTED = ["finished", "partially_paid"];
+  if (!COUNTED.includes(p.payment_status) || !paymentId) return json(200, { ok: true, counted: false });
 
-  const usd = Number(p.price_amount);
-  if (String(p.price_currency).toLowerCase() !== "usd" || !(usd > 0)) {
-    console.error("crypto-ipn: unexpected amount", p.price_amount, p.price_currency);
+  const usd = countedUsd(p);
+  if (!(usd > 0)) {
+    console.error("crypto-ipn: nothing to count", p.price_amount, p.price_currency, p.pay_amount, p.actually_paid);
     return json(200, { ok: true, counted: false });
   }
 
   try {
     const store = cryptoStore();
     const key = `payments/${paymentId}`;
-    if (!(await store.get(key))) {
+    // One record per payment: a repeat notification overwrites it instead of counting twice,
+    // and a partial payment that is later topped up to "finished" is updated to the full amount.
+    const existing = await store.get(key, { type: "json" }).catch(() => null);
+    if (existing?.status === "finished" && p.payment_status !== "finished") {
+      return json(200, { ok: true, counted: true }); // late, out-of-order notice: keep the finished record
+    }
+    {
       const orderInfo = p.order_id ? await store.get(`orders/${p.order_id}`, { type: "json" }).catch(() => null) : null;
       await store.setJSON(key, {
         usd,
+        status: p.payment_status,
         coin: p.pay_currency || "",
         paid: p.actually_paid ?? null,
         order_id: p.order_id || "",
@@ -48,5 +58,20 @@ export default async (req) => {
     return json(500, { error: "could not record payment" });
   }
 };
+
+/** USD value to count for a payment: the gift amount if (nearly) all of it arrived, else the share that did. */
+function countedUsd(p) {
+  const price = Number(p.price_amount);
+  if (String(p.price_currency).toLowerCase() !== "usd" || !(price > 0)) return 0;
+  if (p.payment_status === "finished") return price;
+  const quoted = Number(p.pay_amount), paid = Number(p.actually_paid);
+  let ratio = quoted > 0 && paid > 0 ? paid / quoted : 0;
+  if (!(ratio > 0)) {
+    const fiat = Number(p.actually_paid_at_fiat);
+    ratio = fiat > 0 ? fiat / price : 0;
+  }
+  if (ratio >= 0.97) return price;
+  return Math.round(price * Math.min(ratio, 1) * 100) / 100;
+}
 
 export const config = { path: "/api/crypto-ipn" };

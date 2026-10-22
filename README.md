@@ -97,11 +97,10 @@ Supporter-credit names are saved on each payment as metadata `credit_name`.
 3. **Crypto (NOWPayments, built).** One-time gifts in crypto go to a NOWPayments hosted invoice
    (`POST /api/crypto-invoice`, `netlify/functions/create-crypto-invoice.mjs`). NOWPayments calls
    `POST /api/crypto-ipn` when a payment changes; the function checks the signature and records each
-   **finished** payment once in Netlify Blobs, and `/api/progress` adds those to the bar. Netlify env vars:
+   **finished** or **partially paid** payment once in Netlify Blobs (97% or more of the quote counts as the full gift, less counts what arrived), and `/api/progress` adds those to the bar. Netlify env vars:
    `NOWPAYMENTS_API_KEY`, `NOWPAYMENTS_IPN_SECRET`, and `NOWPAYMENTS_SANDBOX=true` while testing with a
    sandbox account (remove it for live). In NOWPayments, set the payout wallet(s) you control and choose
-   which coins to accept. Partial or expired payments are not counted; check them in the NOWPayments
-   dashboard. Keep records for tax.
+   which coins to accept. Expired or failed payments are not counted. Keep records for tax.
 4. **Live progress bar.** The bar reads `unlock.progressEndpoint` (JSON `{raised, supporters}`).
    `examples/netlify/functions/progress.js` sums Stripe payments; add crypto totals from the
    provider webhook. Until that exists you can host a static `api/progress` JSON file and update
