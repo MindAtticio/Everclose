@@ -8,7 +8,7 @@
 window.EVERCLOSE_CONFIG = {
   /* "test" = simulated checkout screens + localStorage demo progress.
      "live" = real Stripe / crypto / newsletter / progress endpoints below. */
-  MODE: "test",
+  MODE: "live",
 
   /* ---- Premiere -------------------------------------------------------- */
   premiere: {
@@ -57,7 +57,7 @@ window.EVERCLOSE_CONFIG = {
       perks: ["Your name in the supporter credits", "Monthly studio update", "Supporter role on Discord"] },
     { id: "bonded", name: "Bonded", price: 7,  tagline: "Most popular", featured: true,
       perks: ["Everything in Stray", "Behind-the-scenes: storyboards, fight choreography, music sketches", "Vote on the next goal reward"] },
-    { id: "veluri", name: "Veluri", price: 20, tagline: "Inner circle",
+    { id: "veluri", name: "Veluri", price: 15, tagline: "Inner circle",
       perks: ["Everything in Bonded", "Early access to each episode, 48 hours before public release", "Special thanks in the end credits"] }
   ],
 
@@ -69,9 +69,10 @@ window.EVERCLOSE_CONFIG = {
       once_5: "", once_10: "", once_25: "", once_50: "", once_custom: "",
       monthly_stray: "", monthly_bonded: "", monthly_veluri: ""
     },
-    // OPTION B (any amount, cleaner): a serverless function that creates a Checkout Session
-    // and returns {"url": "..."}. Example in examples/netlify/functions/create-checkout.js
-    checkoutEndpoint: ""
+    // OPTION B (in use): netlify/functions/create-checkout.mjs creates a Stripe Checkout Session
+    // and returns {"url": "..."}. Monthly tier prices are set in Stripe (lookup keys
+    // everclose_monthly_3 / _7 / _15); keep the tier prices above in step with them.
+    checkoutEndpoint: "/api/checkout"
   },
 
   /* ---- Crypto payments ------------------------------------------------- */

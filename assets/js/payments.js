@@ -66,8 +66,8 @@
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify(order)
       });
-      const j = await res.json();
-      if (!j.url) throw new Error("No checkout URL returned");
+      const j = await res.json().catch(() => ({}));
+      if (!res.ok || !j.url) throw new Error(j.error || "Checkout is unavailable right now. Please try again in a moment.");
       window.location.href = j.url;
       return true;
     }
@@ -89,7 +89,7 @@
   /* ---------- crypto ---------- */
   async function startCryptoCheckout(order, coin) {
     if (isTest) return false;
-    if (!C.crypto.invoiceEndpoint) throw new Error("Crypto is not configured (add invoiceEndpoint in config.js)");
+    if (!C.crypto.invoiceEndpoint) throw new Error("Crypto support is coming soon. Card, Apple Pay and Google Pay work now.");
     const res = await fetch(C.crypto.invoiceEndpoint, {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...order, coin })

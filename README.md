@@ -5,7 +5,10 @@ the public **$20,000 community unlock** bar, story and characters, support tiers
 **Support** checkout (card / Apple Pay / Google Pay **or** crypto), email signup, Discord link,
 content note and footer.
 
-> **Right now everything is simulated.** `MODE: "test"` in `assets/js/config.js`.
+> `MODE: "live"` in `assets/js/config.js` sends card payments to Stripe. With a sandbox key that is
+> still test money. Set `MODE: "test"` to go back to the fully simulated prototype below.
+>
+> **In test mode everything is simulated.**
 > No real money moves, no API keys exist anywhere in this folder, and the progress numbers
 > are demo data stored in your own browser (localStorage). A striped TEST MODE ribbon and
 > "demo data" label are shown on the page while in test mode.
@@ -58,20 +61,39 @@ screenshots/               QA screenshots (desktop 1440px + mobile 390px)
 
 ## Go-live checklist
 
-1. **Stripe account (in your own name / Mind Attic's).** stripe.com → sign up → business
-   details + bank account → identity verification. Describe the business honestly: "independent
-   animated series, fan support and memberships; mature themes, no explicit content".
-   Turn on Apple Pay and Google Pay in *Settings → Payment methods* (they appear automatically
-   in Stripe Checkout; Apple Pay needs the domain verified, which Stripe does for hosted Checkout).
-2. **Connect card payments – pick one:**
-   - **A. Payment Links (no code, fastest).** In the Dashboard create Payment Links for $5, $10,
-     $25, $50, one "customer chooses amount" link, and three *recurring* links for Stray $3,
-     Bonded $7 and Veluri $20. Paste the URLs into `stripe.paymentLinks` in `config.js`.
-     Set each link's confirmation page to redirect to `https://YOUR-DOMAIN/?thanks=1#unlock`.
-   - **B. Checkout Sessions (any amount, cleaner).** Deploy
-     `examples/netlify/functions/create-checkout.js`, set `STRIPE_SECRET_KEY` (+ `PRICE_*` IDs) as
-     environment variables on the host (**never in the site files**), and set
-     `stripe.checkoutEndpoint`.
+### Stripe (built, on Netlify Functions)
+
+Stripe account: **EVERCLOSE** (in the MIND ATTIC organisation). Fans pay on Stripe-hosted Checkout;
+card, Apple Pay, Google Pay and Link appear automatically.
+
+| File | Route | Does |
+|---|---|---|
+| `netlify/functions/create-checkout.mjs` | `POST /api/checkout` | Creates a Checkout Session: one-time gift (any amount $2–$5,000) or monthly membership |
+| `netlify/functions/progress.mjs` | `GET /api/progress` | Public unlock total, summed from Stripe payments minus refunds, cached 60 s |
+| `netlify/lib/stripe.mjs` | – | Stripe client, price lookup keys, limits |
+
+Prices live in Stripe and are found by lookup key: `everclose_monthly_3` (Stray), `everclose_monthly_7`
+(Bonded), `everclose_monthly_15` (Veluri), `everclose_one_time` (one-time product). If you change a
+tier price, move its lookup key to the new price in Stripe **and** update `tiers` in `config.js`.
+
+**Netlify environment variables** (Site configuration → Environment variables, never in the files):
+
+| Variable | Value |
+|---|---|
+| `STRIPE_SECRET_KEY` | A restricted key from the EVERCLOSE account (sandbox key for previews, live key for production). Permissions: Checkout Sessions **write**, Prices **read**, Products **read**, Charges **read** |
+| `CAMPAIGN_START` | optional, default `2026-10-20T00:00:00Z`: payments from this date count toward the bar |
+| `CRYPTO_RAISED` / `CRYPTO_SUPPORTERS` | optional: crypto totals (USD / count) to add to the bar by hand |
+
+**Stripe Dashboard, no code:** turn on the Customer portal (Settings → Billing → Customer portal) and
+its login link, and in Settings → Billing → Subscriptions and emails turn on Smart Retries, failed-payment
+emails and the "manage subscription" link in emails, so members can cancel or change cards themselves.
+Supporter-credit names are saved on each payment as metadata `credit_name`.
+
+1. **Account activation.** Complete the EVERCLOSE account's business details and bank account. Describe
+   the business honestly: "independent animated series, fan support and memberships; mature themes,
+   no explicit content". Add real Terms and Privacy pages (Stripe needs them).
+2. **Recreate the products in live mode** with the same lookup keys, then set the live
+   `STRIPE_SECRET_KEY` for the production context only. Do one real $1 payment and refund it.
 3. **Crypto processor.** Open a NOWPayments (or Coinbase Commerce) account, connect a payout
    wallet you control, deploy `create-crypto-invoice.js` with the API key as an env var, set
    `crypto.invoiceEndpoint`. Crypto is one-time only on the page. Keep records for tax; convert
