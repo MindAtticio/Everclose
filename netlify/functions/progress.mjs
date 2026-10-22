@@ -6,7 +6,7 @@
 //
 // Crypto is handled outside Stripe: add those totals by hand with the Netlify environment
 // variables CRYPTO_RAISED (USD) and CRYPTO_SUPPORTERS, then redeploy.
-import { stripe, json } from "../lib/stripe.mjs";
+import { getStripe, json, logStripe, publicCheckoutError } from "../lib/stripe.mjs";
 
 const CAMPAIGN_START = process.env.CAMPAIGN_START || "2026-10-20T00:00:00Z";
 
@@ -15,6 +15,7 @@ export default async () => {
     let cents = 0;
     const supporters = new Set();
     const since = Math.floor(Date.parse(CAMPAIGN_START) / 1000);
+    const stripe = getStripe();
     for await (const ch of stripe.charges.list({ limit: 100, created: { gte: since } })) {
       if (ch.status !== "succeeded" || ch.currency !== "usd") continue;
       const net = ch.amount - ch.amount_refunded;
@@ -33,8 +34,9 @@ export default async () => {
       }
     );
   } catch (err) {
-    console.error("progress failed:", err?.message);
-    return json(502, { error: "progress unavailable" }, { "Cache-Control": "no-store" });
+    logStripe("progress failed", err);
+    const { status, code } = publicCheckoutError(err);
+    return json(status, { error: "The unlock total is unavailable right now.", code }, { "Cache-Control": "no-store" });
   }
 };
 

@@ -1,9 +1,12 @@
 // POST /api/checkout  body: { frequency: "once"|"monthly", amount?: number, tierId?: string, name?: string }
-// Creates a Stripe-hosted Checkout Session and returns { url } for the page to redirect to.
-// One-time gifts use the "Support EVERCLOSE" product with the amount the fan chose on the site;
-// monthly memberships use the fixed tier prices. Card, Apple Pay, Google Pay and Link are shown by
-// Stripe automatically (managed in Dashboard > Settings > Payment methods).
-import { stripe, getPrices, TIER_LOOKUP_KEYS, ONE_TIME_LOOKUP_KEY, ONE_TIME_MIN, ONE_TIME_MAX, siteUrl, json } from "../lib/stripe.mjs";
+// Creates a Stripe-hosted Checkout Session and returns { url }.
+// One-time gifts use an inline price for the amount chosen on the site (no pre-created Product).
+// Monthly memberships use a Stripe Price lookup key when one exists, otherwise the tier amount
+// in TIER_AMOUNTS_USD. Card, Apple Pay, Google Pay and Link are shown by Stripe.
+import {
+  getStripe, getPrices, TIER_LOOKUP_KEYS, TIER_AMOUNTS_USD, TIER_NAMES,
+  ONE_TIME_MIN, ONE_TIME_MAX, siteUrl, json, publicCheckoutError, logStripe, isStripeAuthError,
+} from "../lib/stripe.mjs";
 
 export default async (req) => {
   if (req.method !== "POST") return json(405, { error: "Method not allowed" });
@@ -11,14 +14,17 @@ export default async (req) => {
   let order;
   try { order = await req.json(); } catch { return json(400, { error: "Invalid request" }); }
   const { frequency, amount, tierId } = order || {};
-  // Name for the supporter credits: optional, plain text, short.
   const creditName = String(order?.name || "").replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, 60);
 
-  const site = siteUrl();
+  if (frequency !== "monthly" && frequency !== "once") {
+    return json(400, { error: "Unknown payment type" });
+  }
+
+  const site = siteUrl(req);
   const metadata = { campaign: "episode2_unlock", credit_name: creditName };
 
   try {
-    const prices = await getPrices();
+    const stripe = getStripe();
     const common = {
       success_url: `${site}/?thanks=1&session_id={CHECKOUT_SESSION_ID}#unlock`,
       cancel_url: `${site}/#support`,
@@ -30,42 +36,64 @@ export default async (req) => {
 
     let session;
     if (frequency === "monthly") {
-      const price = prices[TIER_LOOKUP_KEYS[tierId]];
-      if (!price) return json(400, { error: "Unknown membership tier" });
+      const line = await monthlyLineItem(tierId);
+      if (!line) return json(400, { error: "Unknown membership tier" });
       session = await stripe.checkout.sessions.create({
         ...common,
         mode: "subscription",
-        line_items: [{ price: price.id, quantity: 1 }],
+        line_items: [{ quantity: 1, ...line }],
         subscription_data: { metadata },
       });
-    } else if (frequency === "once") {
+    } else {
       const usd = Number(amount);
       if (!Number.isFinite(usd) || usd < ONE_TIME_MIN || usd > ONE_TIME_MAX) {
         return json(400, { error: `Please choose an amount between $${ONE_TIME_MIN} and $${ONE_TIME_MAX}.` });
       }
-      const product = prices[ONE_TIME_LOOKUP_KEY]?.product;
-      if (!product) throw new Error(`No active price with lookup key ${ONE_TIME_LOOKUP_KEY}`);
       session = await stripe.checkout.sessions.create({
         ...common,
         mode: "payment",
         submit_type: "donate",
         line_items: [{
           quantity: 1,
-          price_data: { currency: "usd", unit_amount: Math.round(usd * 100), product },
+          price_data: {
+            currency: "usd",
+            unit_amount: Math.round(usd * 100),
+            product_data: { name: "Support EVERCLOSE (Episode 2 unlock)" },
+          },
         }],
         payment_intent_data: { metadata },
       });
-    } else {
-      return json(400, { error: "Unknown payment type" });
     }
 
+    if (!session?.url) throw new Error("missing_url");
     return json(200, { url: session.url });
   } catch (err) {
-    console.error("create-checkout failed:", err?.type, err?.message);
-    // On previews, show the real reason on screen to make testing easier; fans on production see a friendly message.
-    const detail = process.env.CONTEXT === "production" ? "" : ` [${err?.type || "Error"}: ${err?.message}]`;
-    return json(502, { error: "Checkout is unavailable right now. Please try again in a moment." + detail });
+    logStripe("create-checkout failed", err);
+    const { status, error, code } = publicCheckoutError(err);
+    return json(status, { error, code });
   }
 };
+
+/** Prefer the Dashboard price. If it is missing or not readable, charge the tier amount. */
+async function monthlyLineItem(tierId) {
+  const lookup = TIER_LOOKUP_KEYS[tierId];
+  const usd = TIER_AMOUNTS_USD[tierId];
+  if (!lookup || !usd) return null;
+  try {
+    const prices = await getPrices();
+    if (prices[lookup]?.id) return { price: prices[lookup].id };
+  } catch (err) {
+    if (isStripeAuthError(err)) throw err;
+    logStripe("monthly price lookup skipped", err);
+  }
+  return {
+    price_data: {
+      currency: "usd",
+      unit_amount: Math.round(usd * 100),
+      recurring: { interval: "month" },
+      product_data: { name: `EVERCLOSE ${TIER_NAMES[tierId] || tierId} membership` },
+    },
+  };
+}
 
 export const config = { path: "/api/checkout" };

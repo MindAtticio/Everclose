@@ -1,5 +1,6 @@
 # Static site: publish the repository root, no build step.
-# functions matches the Netlify UI directory (unused while MODE is "test").
+# Functions read STRIPE_SECRET_KEY from the Netlify environment at runtime.
+# Set that variable in the Netlify UI, then redeploy. Do not put the key in this file.
 
 [build]
   publish = "."

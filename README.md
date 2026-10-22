@@ -72,17 +72,30 @@ card, Apple Pay, Google Pay and Link appear automatically.
 | `netlify/functions/progress.mjs` | `GET /api/progress` | Public unlock total, summed from Stripe payments minus refunds, cached 60 s |
 | `netlify/lib/stripe.mjs` | – | Stripe client, price lookup keys, limits |
 
-Prices live in Stripe and are found by lookup key: `everclose_monthly_3` (Stray), `everclose_monthly_7`
-(Bonded), `everclose_monthly_20` (Veluri), `everclose_one_time` (one-time product). If you change a
-tier price, move its lookup key to the new price in Stripe **and** update `tiers` in `config.js`.
+One-time gifts do not need a pre-created Stripe Product. Monthly memberships use a Price
+lookup key when it exists (`everclose_monthly_3`, `everclose_monthly_7`, `everclose_monthly_20`);
+otherwise the function charges the tier amount in `config.js` (Stray $3, Bonded $7, Veluri $20).
+Create those lookup keys in the **same mode** as the secret key (test with `sk_test_` / `rk_test_`,
+live with `sk_live_` / `rk_live_`) if you want the Dashboard price to win.
 
-**Netlify environment variables** (Site configuration → Environment variables, never in the files):
+**Netlify environment variable** (Site configuration → Environment variables, never in the files):
+
+| Name | Exactly this |
+|---|---|
+| `STRIPE_SECRET_KEY` | A **secret** key (`sk_test_…` or `sk_live_…`) or restricted key (`rk_test_…` / `rk_live_…`). Not a publishable `pk_` key. |
+
+Scopes: **Functions** (runtime), and both **Production** and **Deploy Previews**. The live site was
+published from a deploy preview, so a Production-only variable is invisible to it. Changing or adding
+the variable does nothing until you **redeploy** (Deploys → Trigger deploy, or merge a commit).
+
+For a restricted key, allow Checkout Sessions **write**, plus Prices, Products, and Charges **read**
+(Charges read is what fills the public progress bar).
 
 | Variable | Value |
 |---|---|
-| `STRIPE_SECRET_KEY` | A restricted key from the EVERCLOSE account (sandbox key for previews, live key for production). Permissions: Checkout Sessions **write**, Prices **read**, Products **read**, Charges **read** |
 | `CAMPAIGN_START` | optional, default `2026-10-20T00:00:00Z`: payments from this date count toward the bar |
 | `CRYPTO_RAISED` / `CRYPTO_SUPPORTERS` | optional: crypto totals (USD / count) to add to the bar by hand |
+| `SITE_URL` | optional override for the Stripe success/cancel URL, e.g. `https://everclose.tv` |
 
 **Stripe Dashboard, no code:** turn on the Customer portal (Settings → Billing → Customer portal) and
 its login link, and in Settings → Billing → Subscriptions and emails turn on Smart Retries, failed-payment
@@ -92,8 +105,9 @@ Supporter-credit names are saved on each payment as metadata `credit_name`.
 1. **Account activation.** Complete the EVERCLOSE account's business details and bank account. Describe
    the business honestly: "independent animated series, fan support and memberships; mature themes,
    no explicit content". Add real Terms and Privacy pages (Stripe needs them).
-2. **Recreate the products in live mode** with the same lookup keys, then set the live
-   `STRIPE_SECRET_KEY` for the production context only. Do one real $1 payment and refund it.
+2. **When you switch from a test key to a live key**, set the live `STRIPE_SECRET_KEY` for
+   Production (and redeploy). Optional: recreate the monthly lookup keys in live mode. Do one real
+   $1 payment and refund it.
 3. **Crypto processor.** Open a NOWPayments (or Coinbase Commerce) account, connect a payout
    wallet you control, deploy `create-crypto-invoice.js` with the API key as an env var, set
    `crypto.invoiceEndpoint`. Crypto is one-time only on the page. Keep records for tax; convert
