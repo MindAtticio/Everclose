@@ -1,0 +1,7 @@
+# Static site: publish the repository root, no build step.
+# functions matches the Netlify UI directory (unused while MODE is "test").
+
+[build]
+  publish = "."
+  command = ""
+  functions = "netlify/functions"
