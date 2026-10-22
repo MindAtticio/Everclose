@@ -13,7 +13,7 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_missing");
 export const TIER_LOOKUP_KEYS = {
   stray: "everclose_monthly_3",
   bonded: "everclose_monthly_7",
-  veluri: "everclose_monthly_15",
+  veluri: "everclose_monthly_20",
 };
 export const ONE_TIME_LOOKUP_KEY = "everclose_one_time";
 

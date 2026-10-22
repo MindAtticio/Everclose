@@ -73,7 +73,7 @@ card, Apple Pay, Google Pay and Link appear automatically.
 | `netlify/lib/stripe.mjs` | – | Stripe client, price lookup keys, limits |
 
 Prices live in Stripe and are found by lookup key: `everclose_monthly_3` (Stray), `everclose_monthly_7`
-(Bonded), `everclose_monthly_15` (Veluri), `everclose_one_time` (one-time product). If you change a
+(Bonded), `everclose_monthly_20` (Veluri), `everclose_one_time` (one-time product). If you change a
 tier price, move its lookup key to the new price in Stripe **and** update `tiers` in `config.js`.
 
 **Netlify environment variables** (Site configuration → Environment variables, never in the files):
