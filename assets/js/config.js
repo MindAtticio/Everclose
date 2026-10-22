@@ -57,7 +57,7 @@ window.EVERCLOSE_CONFIG = {
       perks: ["Your name in the supporter credits", "Monthly studio update", "Supporter role on Discord"] },
     { id: "bonded", name: "Bonded", price: 7,  tagline: "Most popular", featured: true,
       perks: ["Everything in Stray", "Behind-the-scenes: storyboards, fight choreography, music sketches", "Vote on the next goal reward"] },
-    { id: "veluri", name: "Veluri", price: 15, tagline: "Inner circle",
+    { id: "veluri", name: "Veluri", price: 20, tagline: "Inner circle",
       perks: ["Everything in Bonded", "Early access to each episode, 48 hours before public release", "Special thanks in the end credits"] }
   ],
 
