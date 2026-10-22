@@ -2,9 +2,10 @@
 // Verifies the x-nowpayments-sig signature, then records each "finished" or "partially_paid" payment
 // in Netlify Blobs (one record per payment, updated if its status changes) and refreshes the crypto
 // totals that /api/progress adds to the unlock bar.
-// Crypto rates move between the quote and the payment, so a fan who sends what NOWPayments showed can
-// arrive a few cents short ("partially_paid"). If at least 97% arrives, the full gift is counted;
-// otherwise the USD value of what actually arrived is counted. Never more than the gift amount.
+// Every payment is counted at the real USD value that arrived, to the cent: the gift amount scaled by
+// how much of the quoted crypto amount actually arrived (crypto rates move between quote and payment,
+// so a fan who sends exactly what NOWPayments showed can land a little short or over). No rounding up,
+// so the bar never runs ahead of the money received. The gift amount is kept on the record too.
 import { verifyIpn, cryptoStore, recomputeTotals } from "../lib/crypto.mjs";
 import { json } from "../lib/stripe.mjs";
 
@@ -41,7 +42,8 @@ export default async (req) => {
     {
       const orderInfo = p.order_id ? await store.get(`orders/${p.order_id}`, { type: "json" }).catch(() => null) : null;
       await store.setJSON(key, {
-        usd,
+        usd,                                  // real value received (what the bar counts)
+        gift_usd: Number(p.price_amount) || 0, // the amount the fan chose
         status: p.payment_status,
         coin: p.pay_currency || "",
         paid: p.actually_paid ?? null,
@@ -59,19 +61,15 @@ export default async (req) => {
   }
 };
 
-/** USD value to count for a payment: the gift amount if (nearly) all of it arrived, else the share that did. */
+/** Real USD value received: the gift amount x (crypto that arrived / crypto quoted), to the cent. */
 function countedUsd(p) {
   const price = Number(p.price_amount);
   if (String(p.price_currency).toLowerCase() !== "usd" || !(price > 0)) return 0;
-  if (p.payment_status === "finished") return price;
   const quoted = Number(p.pay_amount), paid = Number(p.actually_paid);
-  let ratio = quoted > 0 && paid > 0 ? paid / quoted : 0;
-  if (!(ratio > 0)) {
-    const fiat = Number(p.actually_paid_at_fiat);
-    ratio = fiat > 0 ? fiat / price : 0;
-  }
-  if (ratio >= 0.97) return price;
-  return Math.round(price * Math.min(ratio, 1) * 100) / 100;
+  if (quoted > 0 && paid > 0) return Math.floor(price * (paid / quoted) * 100) / 100;
+  const fiat = Number(p.actually_paid_at_fiat);
+  if (fiat > 0) return Math.floor(fiat * 100) / 100;
+  return p.payment_status === "finished" ? price : 0; // no amounts in the notice: trust "finished"
 }
 
 export const config = { path: "/api/crypto-ipn" };

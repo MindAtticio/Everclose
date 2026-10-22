@@ -97,7 +97,7 @@ Supporter-credit names are saved on each payment as metadata `credit_name`.
 3. **Crypto (NOWPayments, built).** One-time gifts in crypto go to a NOWPayments hosted invoice
    (`POST /api/crypto-invoice`, `netlify/functions/create-crypto-invoice.mjs`). NOWPayments calls
    `POST /api/crypto-ipn` when a payment changes; the function checks the signature and records each
-   **finished** or **partially paid** payment once in Netlify Blobs (97% or more of the quote counts as the full gift, less counts what arrived), and `/api/progress` adds those to the bar. Netlify env vars:
+   **finished** or **partially paid** payment once in Netlify Blobs at the real USD value that arrived (gift amount x crypto received / crypto quoted, to the cent, never rounded up), and `/api/progress` adds those to the bar. Netlify env vars:
    `NOWPAYMENTS_API_KEY`, `NOWPAYMENTS_IPN_SECRET`, and `NOWPAYMENTS_SANDBOX=true` while testing with a
    sandbox account (remove it for live). In NOWPayments, set the payout wallet(s) you control and choose
    which coins to accept. Expired or failed payments are not counted. Keep records for tax.
