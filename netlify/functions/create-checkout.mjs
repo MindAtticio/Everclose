@@ -61,8 +61,10 @@ export default async (req) => {
 
     return json(200, { url: session.url });
   } catch (err) {
-    console.error("create-checkout failed:", err?.message);
-    return json(502, { error: "Checkout is unavailable right now. Please try again in a moment." });
+    console.error("create-checkout failed:", err?.type, err?.message);
+    // On previews, show the real reason on screen to make testing easier; fans on production see a friendly message.
+    const detail = process.env.CONTEXT === "production" ? "" : ` [${err?.type || "Error"}: ${err?.message}]`;
+    return json(502, { error: "Checkout is unavailable right now. Please try again in a moment." + detail });
   }
 };
 
