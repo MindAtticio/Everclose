@@ -8,7 +8,7 @@
 window.EVERCLOSE_CONFIG = {
   /* "test" = simulated checkout screens + localStorage demo progress.
      "live" = real Stripe / crypto / newsletter / progress endpoints below. */
-  MODE: "test",
+  MODE: "live",
 
   /* ---- Premiere -------------------------------------------------------- */
   premiere: {
@@ -69,9 +69,10 @@ window.EVERCLOSE_CONFIG = {
       once_5: "", once_10: "", once_25: "", once_50: "", once_custom: "",
       monthly_stray: "", monthly_bonded: "", monthly_veluri: ""
     },
-    // OPTION B (any amount, cleaner): a serverless function that creates a Checkout Session
-    // and returns {"url": "..."}. Example in examples/netlify/functions/create-checkout.js
-    checkoutEndpoint: ""
+    // OPTION B (in use): netlify/functions/create-checkout.mjs creates a Stripe Checkout Session
+    // and returns {"url": "..."}. Monthly tier prices are set in Stripe (lookup keys
+    // everclose_monthly_3 / _7 / _20); keep the tier prices above in step with them.
+    checkoutEndpoint: "/api/checkout"
   },
 
   /* ---- Crypto payments ------------------------------------------------- */

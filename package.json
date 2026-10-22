@@ -1,0 +1,9 @@
+{
+  "name": "everclose-site",
+  "private": true,
+  "description": "EVERCLOSE website. Static site; Netlify Functions in netlify/functions handle Stripe.",
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "stripe": "^18.5.0"
+  }
+}
