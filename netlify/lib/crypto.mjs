@@ -73,3 +73,13 @@ export async function readTotals() {
     return { raised: 0, supporters: 0 };
   }
 }
+
+/** Keep the last 20 IPN outcomes (no secrets, no personal data) for /api/crypto-status. Never throws. */
+export async function logEvent(entry) {
+  try {
+    const store = cryptoStore();
+    const list = (await store.get("events", { type: "json" })) || [];
+    list.unshift({ at: new Date().toISOString(), ...entry });
+    await store.setJSON("events", list.slice(0, 20));
+  } catch { /* diagnostics only */ }
+}
