@@ -426,6 +426,9 @@ button{font:inherit;color:inherit}
   .checkout__summary{border-right:0;border-bottom:1px solid var(--line);padding:18px 20px}
   .checkout__what{margin-top:12px}
   .checkout__art{display:none}
+  /* Stacked layout: other section heads are left-aligned, so the pilot intro matches. */
+  .pilot .section__head{text-align:left}
+  .pilot .lede{margin-inline:0}
 }
 @media (max-width:560px){
   .footer__links span{display:none}
