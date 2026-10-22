@@ -31,10 +31,15 @@ export async function getPrices() {
   return priceCache;
 }
 
-/** The public URL to send fans back to: the deploy preview URL on previews, the main site URL in production. */
-export function siteUrl() {
-  const isProd = process.env.CONTEXT === "production";
-  return (isProd ? process.env.URL : process.env.DEPLOY_PRIME_URL || process.env.URL) || "https://everclose.tv";
+/** Where to send fans back to after Checkout: the site they came from (production or a deploy preview),
+ *  but only if it is one of ours; anything else falls back to the main site. */
+const ALLOWED_HOSTS = [/^(www\.)?everclose\.tv$/, /(^|--)everclose01\.netlify\.app$/];
+export function siteUrl(req) {
+  try {
+    const { protocol, host } = new URL(req.url);
+    if (protocol === "https:" && ALLOWED_HOSTS.some((re) => re.test(host))) return `https://${host}`;
+  } catch { /* fall through */ }
+  return "https://everclose.tv";
 }
 
 export function json(status, body, headers = {}) {

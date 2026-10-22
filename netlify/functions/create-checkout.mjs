@@ -14,7 +14,7 @@ export default async (req) => {
   // Name for the supporter credits: optional, plain text, short.
   const creditName = String(order?.name || "").replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, 60);
 
-  const site = siteUrl();
+  const site = siteUrl(req);
   const metadata = { campaign: "episode2_unlock", credit_name: creditName };
 
   try {
@@ -62,8 +62,9 @@ export default async (req) => {
     return json(200, { url: session.url });
   } catch (err) {
     console.error("create-checkout failed:", err?.type, err?.message);
-    // On previews, show the real reason on screen to make testing easier; fans on production see a friendly message.
-    const detail = process.env.CONTEXT === "production" ? "" : ` [${err?.type || "Error"}: ${err?.message}]`;
+    // On deploy previews only, show the real reason on screen to make testing easier; fans on production see a friendly message.
+    const isPreview = site.includes("--everclose01.netlify.app");
+    const detail = isPreview ? ` [${err?.type || "Error"}: ${err?.message}]` : "";
     return json(502, { error: "Checkout is unavailable right now. Please try again in a moment." + detail });
   }
 };
