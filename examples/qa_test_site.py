@@ -100,7 +100,7 @@ async def main():
         await page.click('[data-tier=veluri]')
         await page.wait_for_selector('#modal.is-open')
         sel = await page.get_attribute('.seg__btn[data-freq=monthly]', 'aria-selected'); check(sel == "true", "tier button opens monthly")
-        tot = await page.text_content('#mTotal'); check("$15 / month" in tot, f"monthly total: {tot}")
+        tot = await page.text_content('#mTotal'); check("$20 / month" in tot, f"monthly total: {tot}")
         await page.screenshot(path=SS + "11_modal_monthly.png")
         await page.click('#toMethod')
         check(await page.is_disabled('#payCrypto'), "crypto disabled for monthly")
@@ -110,7 +110,7 @@ async def main():
         await page.wait_for_timeout(1700)
         await page.click('[data-step=success] [data-close]')
         await page.wait_for_timeout(300)
-        n3 = await nums(page); check(n3["raised"] == "$1,320" and n3["sup"] == "41", f"monthly counted {n3['raised']}")
+        n3 = await nums(page); check(n3["raised"] == "$1,325" and n3["sup"] == "41", f"monthly counted {n3['raised']}")
 
         # --- min amount validation ---
         await page.click('.nav [data-support]')
@@ -135,7 +135,7 @@ async def main():
         await page.reload(wait_until="networkidle")
         await page.evaluate("document.querySelector('#unlock').scrollIntoView()")
         await page.wait_for_timeout(2600)
-        n4 = await nums(page); check(n4["raised"] == "$1,320", f"persisted after reload: {n4['raised']}")
+        n4 = await nums(page); check(n4["raised"] == "$1,325", f"persisted after reload: {n4['raised']}")
         await page.screenshot(path=SS + "13_desktop_unlock_after_support.png")
         await page.click('#resetDemo'); await page.wait_for_timeout(1700)
         n5 = await nums(page); check(n5["raised"] == "$1,240", "reset demo works")

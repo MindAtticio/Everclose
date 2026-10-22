@@ -66,7 +66,7 @@ screenshots/               QA screenshots (desktop 1440px + mobile 390px)
 2. **Connect card payments – pick one:**
    - **A. Payment Links (no code, fastest).** In the Dashboard create Payment Links for $5, $10,
      $25, $50, one "customer chooses amount" link, and three *recurring* links for Stray $3,
-     Bonded $7 and Veluri $15. Paste the URLs into `stripe.paymentLinks` in `config.js`.
+     Bonded $7 and Veluri $20. Paste the URLs into `stripe.paymentLinks` in `config.js`.
      Set each link's confirmation page to redirect to `https://YOUR-DOMAIN/?thanks=1#unlock`.
    - **B. Checkout Sessions (any amount, cleaner).** Deploy
      `examples/netlify/functions/create-checkout.js`, set `STRIPE_SECRET_KEY` (+ `PRICE_*` IDs) as
