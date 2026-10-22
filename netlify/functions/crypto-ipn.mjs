@@ -11,10 +11,8 @@ import { json } from "../lib/stripe.mjs";
 
 export default async (req) => {
   if (req.method === "GET") {
-    // Opening this address in a browser proves the route works and that notices can be saved;
-    // the check then appears on /api/crypto-status. NOWPayments itself always uses POST.
-    await logEvent({ result: "self-check (opened in a browser)" });
-    return json(200, { ok: true, message: "The crypto notice address is reachable. Now open /api/crypto-status." });
+    // Reachability check only. Do not write the event log: a browser visit is not a payment notice.
+    return json(200, { ok: true, message: "reachable" });
   }
   if (req.method !== "POST") return json(405, { error: "Method not allowed" });
 
@@ -22,8 +20,8 @@ export default async (req) => {
   console.log("crypto-ipn: notice received,", raw.length, "bytes");
   const check = verifyIpn(raw, req.headers.get("x-nowpayments-sig"));
   if (!check.ok) {
+    // Console only. A rejected signature must not be written to the Blobs event log.
     console.error("crypto-ipn: rejected:", check.reason);
-    await logEvent({ result: "rejected", reason: check.reason });
     return json(401, { error: "invalid signature" });
   }
 
