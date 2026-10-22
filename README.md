@@ -99,7 +99,10 @@ Supporter-credit names are saved on each payment as metadata `credit_name`.
    `POST /api/crypto-ipn` when a payment changes; the function checks the signature and records each
    **finished** or **partially paid** payment once in Netlify Blobs at the real USD value that arrived (gift amount x crypto received / crypto quoted, to the cent, never rounded up), and `/api/progress` adds those to the bar. Netlify env vars:
    `NOWPAYMENTS_API_KEY`, `NOWPAYMENTS_IPN_SECRET`, and `NOWPAYMENTS_SANDBOX=true` while testing with a
-   sandbox account (remove it for live). In NOWPayments, set the payout wallet(s) you control and choose
+   sandbox account (remove it for live). `STATUS_KEY` is a private password for `GET /api/crypto-status?key=…`
+   (totals and the last notices). If `STATUS_KEY` is unset, or `key` is missing or wrong, that address
+   returns 404 `{error:"Not found"}` and does not say why. Set it in Netlify, never in the repo, then redeploy.
+   In NOWPayments, set the payout wallet(s) you control and choose
    which coins to accept. Expired or failed payments are not counted. Keep records for tax.
 4. **Live progress bar.** The bar reads `unlock.progressEndpoint` (JSON `{raised, supporters}`).
    `examples/netlify/functions/progress.js` sums Stripe payments; add crypto totals from the
@@ -120,6 +123,17 @@ Supporter-credit names are saved on each payment as metadata `credit_name`.
    in the host's dashboard and set the DNS records it shows you (usually a CNAME for `www`
    and an A/ALIAS for the root). Interim option: `mindattic.io/everclose` or a subdomain such as
    `everclose.mindattic.io`.
+
+### Going live
+
+Do these in the Netlify and Stripe dashboards, then redeploy. This change does not remove the sandbox flag, replace any keys, or edit `MODE`.
+
+1. Remove the Netlify variable `NOWPAYMENTS_SANDBOX` (only the value `true` selects the sandbox API).
+2. Replace `NOWPAYMENTS_API_KEY` and `NOWPAYMENTS_IPN_SECRET` with the live NOWPayments API key and IPN secret.
+3. Replace `STRIPE_SECRET_KEY` with a live secret key (`sk_live_…`), not a publishable `pk_` key.
+4. In `assets/js/config.js`, set `MODE` from `"test"` to `"live"`. Only the exact string `"live"` leaves test mode (`payments.js` treats anything else as test). In test mode the page keeps the striped TEST MODE ribbon, the "demo data" chip, and "Reset demo numbers"; the unlock bar uses demo figures in that browser (starting at $1,240 from 38 supporters); card and crypto stay on the simulated screens (test card `4242…`, placeholder crypto invoice) and are not sent to Stripe or NOWPayments; email signup is stored in the browser and labelled simulated. In live mode those three test controls are removed, card redirects to Stripe Checkout, crypto redirects to a NOWPayments invoice, and the bar reads `/api/progress`. `MODE` does not choose test versus live API keys — that is `NOWPAYMENTS_SANDBOX` and which key you stored. Signup stays simulated in live mode too unless `newsletter.action` is set.
+5. Redeploy. New or changed environment variables do not apply to the current deploy.
+6. Pay $1 with your own card, confirm it shows on the bar, then refund it in Stripe.
 
 ## Placeholders still in the prototype
 
