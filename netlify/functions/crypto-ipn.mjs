@@ -10,6 +10,12 @@ import { verifyIpn, cryptoStore, recomputeTotals, logEvent } from "../lib/crypto
 import { json } from "../lib/stripe.mjs";
 
 export default async (req) => {
+  if (req.method === "GET") {
+    // Opening this address in a browser proves the route works and that notices can be saved;
+    // the check then appears on /api/crypto-status. NOWPayments itself always uses POST.
+    await logEvent({ result: "self-check (opened in a browser)" });
+    return json(200, { ok: true, message: "The crypto notice address is reachable. Now open /api/crypto-status." });
+  }
   if (req.method !== "POST") return json(405, { error: "Method not allowed" });
 
   const raw = await req.text();

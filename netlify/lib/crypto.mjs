@@ -81,5 +81,5 @@ export async function logEvent(entry) {
     const list = (await store.get("events", { type: "json" })) || [];
     list.unshift({ at: new Date().toISOString(), ...entry });
     await store.setJSON("events", list.slice(0, 20));
-  } catch { /* diagnostics only */ }
+  } catch (err) { console.error("crypto: could not save event:", err?.message); }
 }
